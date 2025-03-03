@@ -29,7 +29,6 @@ public class RubiksCube {
         }
     }
     
-    // Example move: Rotates the Up (U) face clockwise
     public void moveU() {
         rotateFaceClockwise(0);
         // Adjust adjacent faces
@@ -107,7 +106,6 @@ public class RubiksCube {
         System.out.println("Initial Cube State:");
         rubiksCube.printCube();
         
-        // Example move execution
         rubiksCube.moveU();
         System.out.println("After U Move:");
         rubiksCube.printCube();
