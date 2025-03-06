@@ -1,37 +1,79 @@
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Scanner;
 
 public class RubiksCube {
-    private char[][][] cube; // 3D Array to store cube faces
-    private final char[] colors = {'w', 'y', 'r', 'o', 'b', 'g'}; // white, yellow, red, orange, blue, green
-    
-    public RubiksCube() {
-        cube = new char[6][3][3]; // 6 faces, 3x3 grid each
-        initializeCube();
-    }
-    
-    private void initializeCube() {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 3; j++) {
-                Arrays.fill(cube[i][j], colors[i]);
-            }
+    static char[][][] cube =  {
+                                    {
+                                        {'w','w','w'},
+                                        {'w','w','w'},
+                                        {'w','w','w'}
+                                    },
+                                    {
+                                        {'b','b','b'},
+                                        {'b','b','b'},
+                                        {'b','b','b'}
+                                    },
+                                    {
+                                        {'r','r','r'},
+                                        {'r','r','r'},
+                                        {'r','r','r'}
+                                    },
+                                    {
+                                        {'g','g','g'},
+                                        {'g','g','g'},
+                                        {'g','g','g'}
+                                    },
+                                    {
+                                        {'y','y','y'},
+                                        {'y','y','y'},
+                                        {'y','y','y'}
+
+                                    },
+                                    {
+                                        {'o','o','o'},
+                                        {'o','o','o'},
+                                        {'o','o','o'}
+                                    },
+                                };
+    static void solve(ArrayList<String> stack){
+        System.out.print("Solution: ");
+        for (int i = stack.size() - 1; i >= 0; i--){
+            System.out.print(stack.get(i));
+            stack.remove(i);
         }
     }
-    
-    public void printCube() {
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 3; j++) {
-                for (int k = 0; k < 3; k++) {
-                    System.out.print(cube[i][j][k] + " ");
+
+    static void printCube(){
+        System.out.println();
+        for (int i = 0; i < cube.length; i++){
+            for (int j = 0; j < cube[i].length; j++){
+                for(int k=0; k<cube[i][j].length; k++){
+                    System.out.print(cube[i][j][k]);
                 }
                 System.out.println();
             }
             System.out.println();
         }
     }
-    
-    public void moveU() {
+
+    static void rotateFaceClockwise(int face) {
+        char[][] temp = new char[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                temp[j][2 - i] = cube[face][i][j];
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                cube[face][i][j] = temp[i][j];
+            }
+        }
+        cube[face] = temp;
+    }
+
+    static void moveU() {
         rotateFaceClockwise(0);
-        // Adjust adjacent faces
         char[] temp = cube[2][0].clone();
         cube[2][0] = cube[4][0];
         cube[4][0] = cube[3][0];
@@ -39,7 +81,7 @@ public class RubiksCube {
         cube[5][0] = temp;
     }
 
-    public void moveD() {
+    static void moveD() {
         rotateFaceClockwise(1);
         char[] temp = cube[2][2].clone();
         cube[2][2] = cube[5][2];
@@ -48,7 +90,7 @@ public class RubiksCube {
         cube[4][2] = temp;
     }
 
-    public void moveR() {
+    static void moveR() {
         rotateFaceClockwise(5);
         for (int i = 0; i < 3; i++) {
             char temp = cube[0][i][2];
@@ -59,17 +101,18 @@ public class RubiksCube {
         }
     }
 
-    public void moveL() {
-        rotateFaceClockwise(5);
+    static void moveL() {
+        rotateFaceClockwise(4);
         for (int i = 0; i < 3; i++) {
-            char temp = cube[0][i][2];
-            cube[2][i][2] = cube[1][i][2];
-            cube[1][i][2] = cube[3][2 - i][0];
-            cube[3][2 - i][0] = temp;
+            char temp = cube[0][i][0];
+            cube[0][i][0] = cube[3][2 - i][2];
+            cube[3][2 - i][2] = cube[1][i][0];
+            cube[1][i][0] = cube[2][i][0];
+            cube[2][i][0] = temp;
         }
     }
 
-    public void moveF() {
+    static void moveF() {
         rotateFaceClockwise(2);
         for (int i = 0; i < 3; i++) {
             char temp = cube[0][2][i];
@@ -80,7 +123,7 @@ public class RubiksCube {
         }
     }
 
-    public void moveB() {
+    static void moveB() {
         rotateFaceClockwise(3);
         for (int i = 0; i < 3; i++) {
             char temp = cube[0][0][i];
@@ -90,44 +133,107 @@ public class RubiksCube {
             cube[4][2 - i][0] = temp;
         }
     }
-    
-    private void rotateFaceClockwise(int face) {
-        char[][] temp = new char[3][3];
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                temp[j][2 - i] = cube[face][i][j];
-            }
-        }
-        cube[face] = temp;
-    }
-    
+
     public static void main(String[] args) {
-        RubiksCube rubiksCube = new RubiksCube();
-        System.out.println("Initial Cube State:");
-        rubiksCube.printCube();
         
-        rubiksCube.moveU();
-        System.out.println("After U Move:");
-        rubiksCube.printCube();
+        Scanner scn = new Scanner(System.in);
 
-        rubiksCube.moveD();
-        System.out.println("After D Move:");
-        rubiksCube.printCube();
+        ArrayList<String> stack = new ArrayList<>();
 
-        rubiksCube.moveR();
-        System.out.println("After R Move:");
-        rubiksCube.printCube();
+        boolean play = true;
 
-        rubiksCube.moveL();
-        System.out.println("After L Move:");
-        rubiksCube.printCube();
+        int argsCount = args.length;
+        int argsCurrent = 0;
 
-        rubiksCube.moveF();
-        System.out.println("After F Move:");
-        rubiksCube.printCube();
+        boolean display = false;
 
-        rubiksCube.moveB();
-        System.out.println("After B Move:");
-        rubiksCube.printCube();
+        while(play){
+            String move;
+
+            if(argsCount > argsCurrent){
+                move = args[argsCurrent];
+                argsCurrent++;
+            }else{
+                display = true;
+                move = scn.nextLine();
+            }
+
+            switch (move.toUpperCase()) {
+                case "U":
+                    moveU();
+                    stack.add("U'");
+                    break;
+                case "U'":
+                    moveU();
+                    moveU();
+                    moveU();
+                    stack.add("U");
+                    break;
+                case "D":
+                    moveD();
+                    stack.add("D'");
+                    break;
+                case "D'":
+                    moveD();
+                    moveD();
+                    moveD();
+                    stack.add("D");
+                    break;
+                case "L":
+                    moveL();
+                    stack.add("L'");
+                    break;
+                case "L'":
+                    moveL();
+                    moveL();
+                    moveL();
+                    stack.add("L");
+                    break;
+                case "R":
+                    moveR();
+                    stack.add("R'");
+                    break;
+                case "R'":
+                    moveR();
+                    moveR();
+                    moveR();
+                    stack.add("R");
+                    break;
+                case "F":
+                    moveF();
+                    stack.add("F'");
+                    break;
+                case "F'":
+                    moveF();
+                    moveF();
+                    moveF();
+                    stack.add("F");
+                    break;
+                case "B":
+                    moveB();
+                    stack.add("B'");
+                    break;               
+                case "B'":
+                    moveB();
+                    moveB();
+                    moveB();
+                    stack.add("B");
+                    break;
+                case "S":
+                    solve(stack);
+                    break;
+                case "Q":
+                    play = false;
+                    break;
+                default:
+                    System.out.println("Bad! Very Bad!!");
+                    break;
+            }
+
+            if(display) printCube();
+        }
+
+        scn.close();
+
     }
 }
